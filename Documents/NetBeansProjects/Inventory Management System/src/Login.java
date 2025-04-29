@@ -1,4 +1,7 @@
 import javax.swing.JOptionPane;
+import java.sql.*;
+import dao.ConnectionProvider;
+
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -75,6 +78,11 @@ public class Login extends javax.swing.JFrame {
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close.png"))); // NOI18N
         jButton2.setText("Close");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 630, 369, -1));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/colorful_background_22.jpg"))); // NOI18N
@@ -90,20 +98,44 @@ public class Login extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        int a = JOptionPane.showConfirmDialog(null, "Do you want to close application", "Select", JOptionPane.YES_NO_OPTION);
-        if(a==0) {
-            System.exit(0);
+        String email = textEmail.getText();
+        String password = textPassword.getText();
+        
+        int temp = 0;
+        try{
+            Connection con = ConnectionProvider.getCon();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("select * from appuser where email='" + email + "' and password='" + password + "' and status='Active'");
+            while(rs.next()){
+                temp = 1;
+                setVisible(false);
+                new Home(rs.getString("userRole")).setVisible(true);
+            }
+            if(temp == 0){
+                JOptionPane.showMessageDialog(null, "Incorrect Email or Password");
+            }
         }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);}
     }//GEN-LAST:event_jButton1ActionPerformed
 
-     private void jButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
         // TODO add your handling code here:
         int a = JOptionPane.showConfirmDialog(null, "Do you want to close application", "Select", JOptionPane.YES_NO_OPTION);
         if(a==0) {
             System.exit(0);
         }
-    }                                        
+    }//GEN-LAST:event_jButton2ActionPerformed
 
+    
+//     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+//        // TODO add your handling code here:
+//        int a = JOptionPane.showConfirmDialog(null, "Do you want to close application", "Select", JOptionPane.YES_NO_OPTION);
+//        if(a==0) {
+//            System.exit(0);
+//        }
+//    }                                        
     /**
      * @param args the command line arguments
      */
