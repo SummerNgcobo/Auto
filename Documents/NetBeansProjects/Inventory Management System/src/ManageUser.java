@@ -1,20 +1,22 @@
 
 import dao.ConnectionProvider;
+import java.awt.Color;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import javax.swing.table.TableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 /**
  *
  * @author User
  */
 public class ManageUser extends javax.swing.JFrame {
-    private int appuserPk =0;
+
+    private int appuserPk = 0;
 
     /**
      * Creates new form ManageUser
@@ -22,6 +24,16 @@ public class ManageUser extends javax.swing.JFrame {
     public ManageUser() {
         initComponents();
         setLocationRelativeTo(null);
+    }
+
+    private boolean validateFields(String formType) {
+        if (formType.equals("edit") && !txtName.getText().equals("") && !txtMobileNumber.getText().equals("") && !txtEmail.getText().equals("") && !txtAddress.getText().equals("")) {
+            return false;
+        } else if (formType.equals("new") && !txtName.getText().equals("") && !txtMobileNumber.getText().equals("") && !txtEmail.getText().equals("") && !txtAddress.getText().equals("") && !txtPassword.getText().equals("")) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -52,7 +64,6 @@ public class ManageUser extends javax.swing.JFrame {
         btnUpdate = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
-        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -80,7 +91,7 @@ public class ManageUser extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tableUser);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 72, 537, -1));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 537, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Name");
@@ -160,15 +171,21 @@ public class ManageUser extends javax.swing.JFrame {
 
         btnReset.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnReset.setText("Reset");
+        btnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnReset, new org.netbeans.lib.awtextra.AbsoluteConstraints(795, 434, -1, -1));
 
         btnClose.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnClose.setText("Close");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnClose, new org.netbeans.lib.awtextra.AbsoluteConstraints(873, 434, -1, -1));
-
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/BlueB.jpg"))); // NOI18N
-        jLabel8.setText("jLabel8");
-        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -176,17 +193,16 @@ public class ManageUser extends javax.swing.JFrame {
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) tableUser.getModel();
-        try{
+        try {
             Connection con = ConnectionProvider.getCon();
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("select *from appuser where useRole='Admin'");
-            while(rs.next()){
-                model.addRow(new Object[]{rs.getString("appuser_pk"),rs.getString("name"), rs.getString("mobileNumber"), rs.getString("email"), rs.getString("address"), rs.getString("status")});
-            }}
-        
-        catch(Exception e){
+            while (rs.next()) {
+                model.addRow(new Object[]{rs.getString("appuser_pk"), rs.getString("name"), rs.getString("mobileNumber"), rs.getString("email"), rs.getString("address"), rs.getString("status")});
+            }
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
-                }
+        }
     }//GEN-LAST:event_formComponentShown
 
     private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
@@ -202,12 +218,116 @@ public class ManageUser extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPasswordActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
+        String name = txtName.getText();
+        String mobileNumber = txtMobileNumber.getText();
+        String email = txtEmail.getText();
+        String password = txtPassword.getText();
+        String address = txtAddress.getText();
+        String status = (String) comboBoxStatus.getSelectedItem();
+
+        if (validateFields("new")) {
+            JOptionPane.showMessageDialog(null, "All fields are required");
+        } else {
+            try {
+                Connection con = ConnectionProvider.getCon();
+                PreparedStatement ps = con.prepareStatement("insert into appuser (userRole, name, mobileNumber, email, password, address, status) values('Admin',?,?,?,?,?,?)");
+                ps.setString(1, name);
+                ps.setString(2, mobileNumber);
+                ps.setString(3, email);
+                ps.setString(4, password);
+                ps.setString(5, address);
+                ps.setString(6, status);
+                ps.executeUpdate();
+                JOptionPane.showMessageDialog(null, "User Added Succesfully");
+                setVisible(false);
+                new ManageUser().setVisible(true);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
+        String name = txtName.getText();
+        String mobileNumber = txtMobileNumber.getText();
+        String email = txtEmail.getText();
+      
+        String address = txtAddress.getText();
+        String status = (String) comboBoxStatus.getSelectedItem();
+
+        if (validateFields("edit")) {
+            JOptionPane.showMessageDialog(null, "All fields are required");
+        } else {
+            try {
+                Connection con = ConnectionProvider.getCon();
+                PreparedStatement ps = con.prepareStatement("update appuser set name=?, mobileNumber, email=?, address=?, status=? where appuser_pk=");
+                ps.setString(1, name);
+                ps.setString(2, mobileNumber);
+                ps.setString(3, email);
+                ps.setString(4, address);
+                ps.setString(5, status);
+                ps.setInt(6, appuserPk);
+                ps.executeUpdate();
+                JOptionPane.showMessageDialog(null, "User Updated Succesfully");
+                setVisible(false);
+                new ManageUser().setVisible(true);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        // TODO add your handling code here:
+        setVisible(false);
+        new ManageUser().setVisible(true);
+    }//GEN-LAST:event_btnResetActionPerformed
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        // TODO add your handling code here:
+        setVisible(false);
+    }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void tableUserMouseClicked(java.awt.event.MouseEvent evt) {
+         int index =  tableUser.getSelectedRow();
+         TableModel model = tableUser.getModel();
+         
+         String id = model.getValueAt(index,  0).toString();
+         appuserPk = Integer.parseInt(id);
+         
+         String name = model.getValueAt(index, 1).toString();
+         txtName.setText(name);
+         
+         String mobileNumber = model.getValueAt(index, 2).toString();
+         txtMobileNumber.setText(mobileNumber);
+         
+         String email = model.getValueAt(index, 3).toString();
+         txtEmail.setText(email);
+         
+         String address = model.getValueAt(index, 4).toString();
+         txtAddress.setText(address);
+         
+         String status = model.getValueAt(index, 5).toString();
+         comboBoxStatus.removeAllItems();
+         if(status.equals("Active")){
+              comboBoxStatus.addItem("Active");
+              comboBoxStatus.addItem("Inactive");
+}       else{
+                comboBoxStatus.addItem("Inactive");
+                comboBoxStatus.addItem("Active");
+                 
+
+}
+         txtPassword.setEditable(false);
+         txtPassword.setBackground(Color.red);
+
+         btnSave.setEnabled(false);
+         btnUpdate.setEnabled(true);
+
+
+}
+         
 
     /**
      * @param args the command line arguments
@@ -239,9 +359,9 @@ public class ManageUser extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ManageUser().setVisible(true);
-            }
-        });
+        // Your code here (e.g., new ManageUser().setVisible(true);)
+    }
+});
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -257,7 +377,6 @@ public class ManageUser extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tableUser;
     private javax.swing.JTextField txtAddress;
@@ -266,4 +385,6 @@ public class ManageUser extends javax.swing.JFrame {
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtPassword;
     // End of variables declaration//GEN-END:variables
+
+
 }
