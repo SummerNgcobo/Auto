@@ -6,7 +6,11 @@ import javax.swing.JOptionPane;
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
-/**
+//    private void setVisible() {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//    }
+
+   /**
  *
  * @author User
  */
@@ -22,9 +26,9 @@ public class Home extends javax.swing.JFrame {
     public Home(String role) {
         initComponents();
         setLocationRelativeTo(null);
-        if(role.equals("Admin"boolean aFlag));
+        if(role.equals("Admin") && aFlag){
             btnUser.setVisible(false);
-    }
+    }}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -56,7 +60,7 @@ public class Home extends javax.swing.JFrame {
                 btnUserActionPerformed(evt);
             }
         });
-        getContentPane().add(btnUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(38, 68, -1, -1));
+        getContentPane().add(btnUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
 
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/category.png"))); // NOI18N
@@ -66,12 +70,17 @@ public class Home extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 70, -1, -1));
+        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 70, -1, -1));
 
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/product.png"))); // NOI18N
         jButton3.setText("Product");
-        getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 70, -1, -1));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, -1, -1));
 
         jButton4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/customers.png"))); // NOI18N
@@ -81,17 +90,17 @@ public class Home extends javax.swing.JFrame {
                 jButton4ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 70, -1, -1));
+        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 70, -1, -1));
 
         jButton5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Orders.png"))); // NOI18N
         jButton5.setText("Order");
-        getContentPane().add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 70, -1, -1));
+        getContentPane().add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 70, -1, -1));
 
         jButton6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/View-orders.png"))); // NOI18N
         jButton6.setText("View Order");
-        getContentPane().add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 70, -1, -1));
+        getContentPane().add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 70, -1, -1));
 
         jButton7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Exit.png"))); // NOI18N
@@ -101,9 +110,9 @@ public class Home extends javax.swing.JFrame {
                 jButton7ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(1220, 70, -1, -1));
+        getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(1130, 70, -1, -1));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/colorful_background_22.jpg"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/BBack2.jpg"))); // NOI18N
         jLabel1.setText("jLabel1");
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1370, -1));
 
@@ -112,9 +121,10 @@ public class Home extends javax.swing.JFrame {
 
     private void btnUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserActionPerformed
         // TODO add your handling code here:
-        new ManageUser().setVisible(true);
+         new ManageUser().setVisible(true);
     }//GEN-LAST:event_btnUserActionPerformed
 
+   
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         new ManageCategory().setVisible(true);
@@ -132,6 +142,11 @@ public class Home extends javax.swing.JFrame {
         new Login().setVisible(true);
     }
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        new ManageProducts().setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -178,4 +193,9 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
-}
+
+ private void setVisible() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }}
+
+
