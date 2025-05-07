@@ -26,7 +26,7 @@ public class Home extends javax.swing.JFrame {
     public Home(String role) {
         initComponents();
         setLocationRelativeTo(null);
-        if(role.equals("Admin") && aFlag){
+        if(role.equals("Admin") && aFlag);{
             btnUser.setVisible(false);
     }}
 
