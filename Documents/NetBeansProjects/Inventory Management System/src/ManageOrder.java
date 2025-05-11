@@ -1,3 +1,8 @@
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -12,7 +17,7 @@ public class ManageOrder extends javax.swing.JFrame {
     private int customerPk = 0;
     private int productPk = 0;
     private int finalTotalPrice = 0;
-    private String oderId = "";
+    private String orderId = "";
 
     /**
      * Creates new form ManageOrder
@@ -30,6 +35,10 @@ public class ManageOrder extends javax.swing.JFrame {
         txtOrderQuantity.setText("");
         
         }
+    
+    public String getUniqueId(String prefix){
+        return prefix +System.nanoTime();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -52,11 +61,11 @@ public class ManageOrder extends javax.swing.JFrame {
         tableCart = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        txtName = new javax.swing.JTextField();
+        txtCustomerName = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         txtCustomerMobileNumber = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        txtEmail = new javax.swing.JTextField();
+        txtCustomerEmail = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         txtProductName = new javax.swing.JTextField();
@@ -149,8 +158,8 @@ public class ManageOrder extends javax.swing.JFrame {
         jLabel6.setText("Name");
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 512, 37, -1));
 
-        txtName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        getContentPane().add(txtName, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 534, 295, -1));
+        txtCustomerName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        getContentPane().add(txtCustomerName, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 534, 295, -1));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel7.setText("Mobile Number");
@@ -168,13 +177,13 @@ public class ManageOrder extends javax.swing.JFrame {
         jLabel8.setText("Email");
         getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 645, 37, -1));
 
-        txtEmail.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        txtEmail.addActionListener(new java.awt.event.ActionListener() {
+        txtCustomerEmail.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        txtCustomerEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtEmailActionPerformed(evt);
+                txtCustomerEmailActionPerformed(evt);
             }
         });
-        getContentPane().add(txtEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 667, 295, -1));
+        getContentPane().add(txtCustomerEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 667, 295, -1));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel9.setText("Selected Product:");
@@ -235,9 +244,11 @@ public class ManageOrder extends javax.swing.JFrame {
         lblFinalTotalPrice.setText("00000");
         getContentPane().add(lblFinalTotalPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(1210, 475, 96, -1));
 
+        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton2.setText("Save Order Details");
         getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 534, 266, -1));
 
+        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton3.setText("Reset");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -246,7 +257,13 @@ public class ManageOrder extends javax.swing.JFrame {
         });
         getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 604, 266, -1));
 
+        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton4.setText("Close");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 667, 266, -1));
 
         jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/flat-lay-minimalistic-geometrical-figures-with-copy-space.jpg"))); // NOI18N
@@ -257,15 +274,42 @@ public class ManageOrder extends javax.swing.JFrame {
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         // TODO add your handling code here:
+        txtCustomerName.setEditable(false);
+        txtCustomerMobileNumber.setEditable(false);
+        txtCustomerEmail.setEditable(false);
+        
+        txtProductName.setEditable(false);
+        txtProductPrice.setEditable(false);
+        txtProductDescription.setEditable(false);
+        
+        DefaultTableModel model = (DefaultTableModel) tableCustomer.getModel();
+        DefaultTableModel productModel = (DefaultTableModel) tableProduct.getModel();
+        
+       try {
+    Connection con = ConnectionProvider.getCon();
+    Statement st = con.createStatement();
+    ResultSet rs = st.executeQuery("select * from customer");
+    while(rs.next()) {
+        model.addRow(new Object[] {rs.getString("customer_pk"), rs.getString("name"), rs.getString("mobileNumber"), rs.getString("email")});
+    }
+    
+    rs = st.executeQuery("select * from product inner join category on product.category_fk = category.category_pk");
+    while(rs.next()) {
+        model.addRow(new Object[] {rs.getString("product_pk"), rs.getString("name"), rs.getString("price"), rs.getString("quantity"), rs.getString("description"), rs.getString("category_fk"), rs.getString(7)});
+    }
+} catch(Exception e) {
+    JOptionPane.showMessageDialog(null, e);
+
+        }
     }//GEN-LAST:event_formComponentShown
 
     private void txtCustomerMobileNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCustomerMobileNumberActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCustomerMobileNumberActionPerformed
 
-    private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
+    private void txtCustomerEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCustomerEmailActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtEmailActionPerformed
+    }//GEN-LAST:event_txtCustomerEmailActionPerformed
 
     private void txtProductNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProductNameActionPerformed
         // TODO add your handling code here:
@@ -281,7 +325,14 @@ public class ManageOrder extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        setVisible(false);
+        new ManageOrder().setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        setVisible(false);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -345,9 +396,9 @@ public class ManageOrder extends javax.swing.JFrame {
     private javax.swing.JTable tableCart;
     private javax.swing.JTable tableCustomer;
     private javax.swing.JTable tableProduct;
+    private javax.swing.JTextField txtCustomerEmail;
     private javax.swing.JTextField txtCustomerMobileNumber;
-    private javax.swing.JTextField txtEmail;
-    private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtCustomerName;
     private javax.swing.JTextField txtOrderQuantity;
     private javax.swing.JTextField txtProductDescription;
     private javax.swing.JTextField txtProductName;
